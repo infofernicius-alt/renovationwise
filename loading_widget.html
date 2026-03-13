@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #141f33;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Sans', sans-serif;
+    padding: 40px 24px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* Top label */
+  .eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #b8874a;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards 0.2s;
+  }
+
+  /* Main title */
+  .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(28px, 5vw, 38px);
+    font-weight: 500;
+    color: #ffffff;
+    text-align: center;
+    line-height: 1.2;
+    margin-bottom: 8px;
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards 0.4s;
+  }
+
+  .title em {
+    color: #b8874a;
+    font-style: italic;
+  }
+
+  .subtitle {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.4);
+    text-align: center;
+    margin-bottom: 44px;
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards 0.6s;
+  }
+
+  /* Progress bar */
+  .progress-wrap {
+    width: 100%;
+    margin-bottom: 10px;
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards 0.8s;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 2px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(to right, #b8874a, #d4a96a);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    position: relative;
+  }
+
+  .progress-fill::after {
+    content: '';
+    position: absolute;
+    right: 0; top: -2px;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #d4a96a;
+    box-shadow: 0 0 8px #d4a96a;
+  }
+
+  .progress-label {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+  }
+
+  .progress-label span {
+    font-size: 10px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.3);
+    letter-spacing: 0.05em;
+  }
+
+  .progress-label .pct {
+    color: #b8874a;
+    font-weight: 500;
+  }
+
+  /* Analysis items */
+  .items-list {
+    width: 100%;
+    margin-top: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 16px;
+    border-radius: 6px;
+    opacity: 0;
+    transform: translateX(-8px);
+    transition: opacity 0.35s ease, transform 0.35s ease, background 0.3s ease;
+  }
+
+  .item.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .item.visible.active {
+    background: rgba(184,135,74,0.06);
+  }
+
+  .item.visible.done {
+    background: transparent;
+  }
+
+  .icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .icon .spinner {
+    width: 14px;
+    height: 14px;
+    border: 1.5px solid rgba(184,135,74,0.3);
+    border-top-color: #b8874a;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  .icon .check {
+    display: none;
+    color: #b8874a;
+    font-size: 14px;
+  }
+
+  .item.done .spinner { display: none; }
+  .item.done .check { display: block; }
+
+  .item-text {
+    font-size: 12.5px;
+    font-weight: 300;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.02em;
+    transition: color 0.3s ease;
+  }
+
+  .item.active .item-text {
+    color: rgba(255,255,255,0.7);
+  }
+
+  .item.done .item-text {
+    color: rgba(255,255,255,0.4);
+  }
+
+  /* Divider */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(184,135,74,0.2), transparent);
+    margin: 28px 0;
+    opacity: 0;
+    animation: fadeIn 0.6s ease forwards 1s;
+  }
+
+  /* Final message */
+  .final-msg {
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+
+  .final-msg.visible {
+    opacity: 1;
+  }
+
+  .final-msg .ready-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #b8874a;
+    margin-bottom: 10px;
+  }
+
+  .final-msg .ready-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 500;
+    color: #ffffff;
+    line-height: 1.3;
+  }
+
+  /* Score preview pill */
+  .score-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(184,135,74,0.1);
+    border: 1px solid rgba(184,135,74,0.25);
+    border-radius: 100px;
+    padding: 8px 20px;
+    margin-top: 20px;
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s;
+  }
+
+  .score-pill.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .score-pill .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: #b8874a;
+    animation: pulse 1.5s ease infinite;
+  }
+
+  .score-pill span {
+    font-size: 11px;
+    font-weight: 400;
+    color: rgba(255,255,255,0.6);
+    letter-spacing: 0.05em;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <div class="eyebrow">Kitchen Renovation Financial Exposure Score™</div>
+
+  <h1 class="title">Analysing your <em>responses…</em></h1>
+  <p class="subtitle">Building your personalised financial exposure profile</p>
+
+  <div class="progress-wrap">
+    <div class="progress-track">
+      <div class="progress-fill" id="progressFill"></div>
+    </div>
+    <div class="progress-label">
+      <span>Processing diagnostic</span>
+      <span class="pct" id="pctLabel">0%</span>
+    </div>
+  </div>
+
+  <div class="items-list" id="itemsList">
+    <div class="item" data-label="Reviewing your renovation stage and scope…"></div>
+    <div class="item" data-label="Mapping your budget clarity signals…"></div>
+    <div class="item" data-label="Calculating quote comparison risk…"></div>
+    <div class="item" data-label="Evaluating labour and fitting cost exposure…"></div>
+    <div class="item" data-label="Identifying hidden cost vulnerabilities…"></div>
+    <div class="item" data-label="Measuring scope creep probability…"></div>
+    <div class="item" data-label="Assessing financial tracking structure…"></div>
+    <div class="item" data-label="Scoring contractor selection confidence…"></div>
+    <div class="item" data-label="Calculating financial stress sensitivity…"></div>
+    <div class="item" data-label="Applying Financial Drift risk model…"></div>
+    <div class="item" data-label="Generating your personalised exposure profile…"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="final-msg" id="finalMsg">
+    <div class="ready-label">Analysis Complete</div>
+    <div class="ready-title">Your Exposure Score is ready.</div>
+    <div class="score-pill" id="scorePill">
+      <div class="dot"></div>
+      <span>Proceed to view your result</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // Build items
+  const list = document.getElementById('itemsList');
+  const items = list.querySelectorAll('.item');
+
+  items.forEach(item => {
+    const label = item.getAttribute('data-label');
+    item.innerHTML = `
+      <div class="icon">
+        <div class="spinner"></div>
+        <div class="check">✓</div>
+      </div>
+      <span class="item-text">${label}</span>
+    `;
+  });
+
+  const fill = document.getElementById('progressFill');
+  const pct = document.getElementById('pctLabel');
+  const finalMsg = document.getElementById('finalMsg');
+  const scorePill = document.getElementById('scorePill');
+
+  const totalItems = items.length;
+  const itemDelay = 1100; // ms per item
+  const startDelay = 1200; // wait before starting
+
+  function setProgress(p) {
+    fill.style.width = p + '%';
+    pct.textContent = Math.round(p) + '%';
+  }
+
+  function animateProgress(from, to, duration, cb) {
+    const start = performance.now();
+    function step(now) {
+      const t = Math.min((now - start) / duration, 1);
+      const ease = t < 0.5 ? 2*t*t : -1+(4-2*t)*t;
+      setProgress(from + (to - from) * ease);
+      if (t < 1) requestAnimationFrame(step);
+      else if (cb) cb();
+    }
+    requestAnimationFrame(step);
+  }
+
+  function processItem(index) {
+    if (index >= totalItems) {
+      // All done
+      animateProgress(
+        parseFloat(fill.style.width) || 90,
+        100,
+        600,
+        () => {
+          pct.textContent = '100%';
+          setTimeout(() => {
+            finalMsg.classList.add('visible');
+            setTimeout(() => scorePill.classList.add('visible'), 400);
+          }, 400);
+        }
+      );
+      return;
+    }
+
+    const item = items[index];
+    const progressTarget = Math.round(((index + 1) / totalItems) * 92);
+
+    // Show item
+    item.classList.add('visible', 'active');
+
+    // Animate progress to this point
+    const currentProgress = parseFloat(fill.style.width) || 0;
+    animateProgress(currentProgress, progressTarget, itemDelay * 0.7, null);
+
+    setTimeout(() => {
+      // Mark as done
+      item.classList.remove('active');
+      item.classList.add('done');
+      // Process next
+      processItem(index + 1);
+    }, itemDelay);
+  }
+
+  // Start sequence
+  setTimeout(() => processItem(0), startDelay);
+</script>
+</body>
+</html>
