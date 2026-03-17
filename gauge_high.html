@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@200;300;400;600;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090F;
+    --surface: rgba(255,255,255,0.03);
+    --border: rgba(255,255,255,0.07);
+    --text-primary: #F2F2F7;
+    --text-secondary: rgba(242,242,247,0.45);
+    --text-tertiary: rgba(242,242,247,0.25);
+
+    --zone-low:    #4A7DFF;
+    --zone-mid:    #FF9500;
+    --zone-high:   #FF3B30;
+
+    --glow-low:    rgba(74,125,255,0.35);
+    --glow-mid:    rgba(255,149,0,0.35);
+    --glow-high:   rgba(255,59,48,0.35);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html, body {
+    width: 100%;
+    min-height: 100vh;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Sora', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Card ── */
+  .card {
+    width: min(460px, 96vw);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 36px 32px 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(20px);
+    opacity: 0;
+    transform: translateY(16px);
+    animation: cardIn 0.7s cubic-bezier(0.34,1.56,0.64,1) 0.1s forwards;
+  }
+
+  /* subtle top shine */
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(255,255,255,0.04) 0%, transparent 50%);
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  /* ambient glow behind gauge — color set by JS */
+  .card-glow {
+    position: absolute;
+    top: 30%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 280px;
+    height: 180px;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0;
+    transition: background 0.8s ease, opacity 1.2s ease;
+    pointer-events: none;
+  }
+
+  /* ── Header ── */
+  .header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.4s forwards;
+  }
+
+  .header-label {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  .header-badge {
+    font-size: 10px;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--border);
+    padding: 4px 10px;
+    border-radius: 100px;
+  }
+
+  /* ── Gauge ── */
+  .gauge-wrap {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  canvas#gauge {
+    display: block;
+    width: 100%;
+    max-width: 360px;
+    height: auto;
+  }
+
+  /* Score overlay */
+  .score-overlay {
+    position: absolute;
+    bottom: 4%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .score-number {
+    font-family: 'Sora', sans-serif;
+    font-size: clamp(52px, 13vw, 80px);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -3px;
+    color: var(--text-primary);
+    transition: color 0.4s ease;
+  }
+
+  .score-unit {
+    font-size: clamp(11px, 2.5vw, 14px);
+    font-weight: 300;
+    color: var(--text-tertiary);
+    letter-spacing: 0.12em;
+    margin-top: 2px;
+  }
+
+  /* ── Zone strip ── */
+  .zone-strip {
+    width: 100%;
+    max-width: 340px;
+    margin-top: 2px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 6px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.6s forwards;
+  }
+
+  .zone-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .zone-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .zone-name {
+    font-size: 9px;
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  /* ── Divider ── */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: var(--border);
+    margin: 24px 0;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.7s forwards;
+  }
+
+  /* ── Outcome section ── */
+  .outcome-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+
+  .outcome-section.visible { opacity: 1; }
+
+  .outcome-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 16px;
+    border-radius: 100px;
+    border: 1px solid transparent;
+    background: rgba(255,255,255,0.04);
+  }
+
+  .outcome-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .outcome-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  /* ── Stats row ── */
+  .stats-row {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    gap: 0;
+    margin-top: 4px;
+  }
+
+  .stat-divider {
+    background: var(--border);
+    height: 100%;
+  }
+
+  .stat {
+    text-align: center;
+    padding: 12px 8px;
+  }
+
+  .stat-value {
+    font-family: 'Sora', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 9px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  /* ── Footer note ── */
+  .footer-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text-tertiary);
+    text-align: center;
+    margin-top: 20px;
+    line-height: 1.5;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.9s forwards;
+  }
+
+  /* ── Keyframes ── */
+  @keyframes cardIn {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50%      { opacity:0.5; transform:scale(0.75); }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-glow" id="cardGlow"></div>
+
+  <div class="header">
+    <span class="header-label">Kitchen Renovation Budget Risk Score™</span>
+    <span class="header-badge">Kitchen Renovation</span>
+  </div>
+
+  <div class="gauge-wrap">
+    <canvas id="gauge" width="360" height="210"></canvas>
+    <div class="score-overlay">
+      <div class="score-number" id="scoreNum">0</div>
+      <div class="score-unit">out of 100</div>
+    </div>
+  </div>
+
+  <div class="zone-strip">
+    <div class="zone-item">
+      <div class="zone-dot" style="background:var(--zone-low)"></div>
+      <span class="zone-name">Contained</span>
+    </div>
+    <div class="zone-item" style="justify-content:center">
+      <div class="zone-dot" style="background:var(--zone-mid)"></div>
+      <span class="zone-name">Emerging</span>
+    </div>
+    <div class="zone-item" style="justify-content:flex-end">
+      <div class="zone-dot" style="background:var(--zone-high)"></div>
+      <span class="zone-name">Elevated</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="outcome-section" id="outcomeSection">
+    <div class="outcome-pill" id="outcomePill">
+      <div class="outcome-indicator" id="outcomeIndicator"></div>
+      <span class="outcome-label" id="outcomeLabel">—</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-value" id="stat1Val">—</div>
+        <div class="stat-label">of homeowners</div>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <div class="stat-value" id="stat2Val">—</div>
+        <div class="stat-label">avg. overrun</div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<script>
+// ── Config ──────────────────────────────────────────────
+const ZONES = [
+  {
+    min:0, max:30,
+    color:'#4A7DFF', glow:'rgba(74,125,255,0.25)',
+    label:'Contained Exposure',
+    stat1:'Top 15%', stat2:'~£1,200',
+    note:'Your renovation shows lower-than-average financial exposure.'
+  },
+  {
+    min:31, max:55,
+    color:'#FF9500', glow:'rgba(255,149,0,0.22)',
+    label:'Emerging Exposure',
+    stat1:'35% match', stat2:'~£3,800',
+    note:'Several financial signals indicate growing exposure risk.'
+  },
+  {
+    min:56, max:75,
+    color:'#FF6B35', glow:'rgba(255,107,53,0.25)',
+    label:'Elevated Exposure',
+    stat1:'35% match', stat2:'~£6,200',
+    note:'Multiple exposure signals detected. Action recommended.'
+  },
+  {
+    min:76, max:100,
+    color:'#FF3B30', glow:'rgba(255,59,48,0.28)',
+    label:'High Financial Exposure',
+    stat1:'Bottom 15%', stat2:'~£9,400',
+    note:'Critical exposure level. Immediate financial structure needed.'
+  },
+];
+
+function getZone(s) {
+  return ZONES.find(z => s >= z.min && s <= z.max) || ZONES[3];
+}
+
+function getScore() {
+  const p = new URLSearchParams(window.location.search);
+  const v = parseInt(p.get('score'), 10);
+  if (!isNaN(v) && v >= 0 && v <= 100) return v;
+  return 85; // high
+}
+
+const TARGET = getScore();
+
+// ── Canvas ───────────────────────────────────────────────
+const canvas = document.getElementById('gauge');
+const ctx    = canvas.getContext('2d');
+const W = canvas.width;
+const H = canvas.height;
+const CX = W / 2;
+const CY = H * 0.86;
+const R  = W * 0.41;
+const THICK = R * 0.13;
+
+// Angles: π → 0 (left→right semicircle)
+const A0 = Math.PI;
+const A1 = 0;
+function scoreToAngle(s) { return A0 + (s / 100) * Math.PI; }
+
+// Gradient stops for the arc
+const ARC_STOPS = [
+  { pos: 0,    hex: '#4A7DFF' },
+  { pos: 0.30, hex: '#4A7DFF' },
+  { pos: 0.55, hex: '#FF9500' },
+  { pos: 0.75, hex: '#FF6B35' },
+  { pos: 1.0,  hex: '#FF3B30' },
+];
+
+function hexToRgb(hex) {
+  const h = hex.replace('#','');
+  return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+}
+
+function lerpRgb(a, b, t) {
+  return a.map((c,i) => Math.round(c + (b[i]-c)*t));
+}
+
+function colorAtPos(pos) {
+  for (let i = 0; i < ARC_STOPS.length-1; i++) {
+    const s0 = ARC_STOPS[i], s1 = ARC_STOPS[i+1];
+    if (pos >= s0.pos && pos <= s1.pos) {
+      const t = (pos - s0.pos) / (s1.pos - s0.pos);
+      const rgb = lerpRgb(hexToRgb(s0.hex), hexToRgb(s1.hex), t);
+      return `rgb(${rgb[0]},${rgb[1]},${rgb[2]})`;
+    }
+  }
+  return ARC_STOPS[ARC_STOPS.length-1].hex;
+}
+
+function draw(current) {
+  ctx.clearRect(0, 0, W, H);
+
+  // ── Track (background arc) ──
+  ctx.beginPath();
+  ctx.arc(CX, CY, R, A0, A1, false);
+  ctx.arc(CX, CY, R - THICK, A1, A0, true);
+  ctx.closePath();
+  ctx.fillStyle = 'rgba(255,255,255,0.04)';
+  ctx.fill();
+
+  // ── Filled arc — draw as thin segments for gradient ──
+  const steps = 200;
+  const anglePerStep = Math.PI / steps;
+  for (let i = 0; i < steps; i++) {
+    const frac = i / steps;
+    const scoreAtStep = frac * 100;
+    if (scoreAtStep > current) break;
+
+    const a1 = A0 + frac * Math.PI;
+    const a2 = a1 + anglePerStep + 0.002;
+    const col = colorAtPos(frac);
+
+    ctx.beginPath();
+    ctx.arc(CX, CY, R, a1, a2, false);
+    ctx.arc(CX, CY, R - THICK, a2, a1, true);
+    ctx.closePath();
+    ctx.fillStyle = col;
+    ctx.fill();
+  }
+
+  // ── Subtle inner shadow ring ──
+  const grad = ctx.createRadialGradient(CX, CY, R-THICK-2, CX, CY, R-THICK+6);
+  grad.addColorStop(0, 'rgba(0,0,0,0.35)');
+  grad.addColorStop(1, 'transparent');
+  ctx.beginPath();
+  ctx.arc(CX, CY, R-THICK+4, A0, A1, false);
+  ctx.arc(CX, CY, R-THICK-2, A1, A0, true);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // ── Zone separator lines ──
+  [30, 55, 75].forEach(boundary => {
+    const angle = scoreToAngle(boundary);
+    const x1 = CX + Math.cos(angle) * (R - THICK - 3);
+    const y1 = CY + Math.sin(angle) * (R - THICK - 3);
+    const x2 = CX + Math.cos(angle) * (R + 3);
+    const y2 = CY + Math.sin(angle) * (R + 3);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = 'rgba(7,9,15,0.9)';
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+  });
+
+  // ── Needle dot ──
+  if (current >= 0) {
+    const angle = scoreToAngle(Math.min(current, 100));
+    const dotR = R - THICK * 0.5;
+    const dx = CX + Math.cos(angle) * dotR;
+    const dy = CY + Math.sin(angle) * dotR;
+    const col = colorAtPos(current / 100);
+
+    // outer glow
+    const grd = ctx.createRadialGradient(dx, dy, 0, dx, dy, 18);
+    grd.addColorStop(0, col.replace('rgb','rgba').replace(')',',0.4)'));
+    grd.addColorStop(1, 'transparent');
+    ctx.beginPath();
+    ctx.arc(dx, dy, 18, 0, Math.PI*2);
+    ctx.fillStyle = grd;
+    ctx.fill();
+
+    // white ring
+    ctx.beginPath();
+    ctx.arc(dx, dy, 9, 0, Math.PI*2);
+    ctx.fillStyle = '#fff';
+    ctx.fill();
+
+    // colored center
+    ctx.beginPath();
+    ctx.arc(dx, dy, 5.5, 0, Math.PI*2);
+    ctx.fillStyle = col;
+    ctx.fill();
+  }
+
+  // ── Scale ticks ──
+  for (let s = 0; s <= 100; s += 10) {
+    const angle = scoreToAngle(s);
+    const major = s % 20 === 0;
+    const len   = major ? 10 : 5;
+    const x1 = CX + Math.cos(angle) * (R + 5);
+    const y1 = CY + Math.sin(angle) * (R + 5);
+    const x2 = CX + Math.cos(angle) * (R + 5 + len);
+    const y2 = CY + Math.sin(angle) * (R + 5 + len);
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.strokeStyle = major ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)';
+    ctx.lineWidth = major ? 1.5 : 1;
+    ctx.stroke();
+  }
+
+  // Scale numbers (0, 50, 100)
+  ctx.font = '400 10px Sora, sans-serif';
+  ctx.fillStyle = 'rgba(255,255,255,0.2)';
+  ctx.textAlign = 'center';
+  [[0,'0'],[50,'50'],[100,'100']].forEach(([s, label]) => {
+    const angle = scoreToAngle(s);
+    const x = CX + Math.cos(angle) * (R + 26);
+    const y = CY + Math.sin(angle) * (R + 26);
+    ctx.fillText(label, x, y);
+  });
+}
+
+// ── Animation ────────────────────────────────────────────
+let startTime = null;
+const DURATION = 2000;
+
+function ease(t) {
+  // iOS-style spring-ease
+  return t < 0.5
+    ? 4*t*t*t
+    : 1 - Math.pow(-2*t+2, 3)/2;
+}
+
+function animate(ts) {
+  if (!startTime) startTime = ts;
+  const t      = Math.min((ts - startTime) / DURATION, 1);
+  const eased  = ease(t);
+  const current = eased * TARGET;
+
+  draw(current);
+
+  // live score counter
+  const scoreEl = document.getElementById('scoreNum');
+  const display = Math.round(current);
+  scoreEl.textContent = display;
+  const liveZone = getZone(display);
+  scoreEl.style.color = liveZone.color;
+
+  // live card glow
+  const glow = document.getElementById('cardGlow');
+  glow.style.background = liveZone.glow.replace('0.25','0.18');
+  glow.style.opacity = '1';
+
+  if (t < 1) {
+    requestAnimationFrame(animate);
+  } else {
+    // Final reveal
+    const zone = getZone(TARGET);
+
+    // Outcome pill
+    const pill = document.getElementById('outcomePill');
+    const ind  = document.getElementById('outcomeIndicator');
+    const lbl  = document.getElementById('outcomeLabel');
+    pill.style.borderColor = zone.color + '44';
+    ind.style.background   = zone.color;
+    lbl.style.color        = zone.color;
+    lbl.textContent        = zone.label;
+
+    // Stats
+    document.getElementById('stat1Val').textContent = zone.stat1;
+    document.getElementById('stat2Val').textContent = zone.stat2;
+    document.getElementById('stat2Val').style.color = zone.color;
+
+
+
+    // Reveal
+    setTimeout(() => {
+      document.getElementById('outcomeSection').classList.add('visible');
+    }, 200);
+  }
+}
+
+setTimeout(() => requestAnimationFrame(animate), 500);
+</script>
+</body>
+</html>
