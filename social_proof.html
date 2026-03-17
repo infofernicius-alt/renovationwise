@@ -162,15 +162,7 @@
     background: var(--surface-hover);
   }
  
-  .tcard-glow {
-    position: absolute;
-    top: -30px; right: -30px;
-    width: 140px; height: 140px;
-    border-radius: 50%;
-    filter: blur(50px);
-    opacity: 0.07;
-    pointer-events: none;
-  }
+  .tcard-glow { display: none; }
  
   .quote-mark {
     font-family: 'Cormorant Garamond', serif;
@@ -298,6 +290,7 @@
     justify-content: center;
     gap: 6px;
     margin-top: 28px;
+    padding: 0 20px;
     opacity: 0;
     animation: fadeUp 0.5s ease 0.6s forwards;
   }
@@ -307,14 +300,23 @@
     border-radius: 50%;
     background: var(--gold);
     opacity: 0.6;
+    flex-shrink: 0;
   }
  
   .verified-text {
     font-size: 10px;
     font-weight: 300;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
     color: var(--text-tertiary);
     text-transform: uppercase;
+    text-align: center;
+    line-height: 1.5;
+  }
+ 
+  @media (max-width: 480px) {
+    .marquee-outer::before,
+    .marquee-outer::after { width: 48px; }
+    .verified-dot { display: none; }
   }
  
   @keyframes fadeUp {
@@ -345,19 +347,31 @@
 </div>
  
 <script>
+// Neutral SVG profile silhouette — tinted per card accent colour
+function avatarSVG(accentColor, bg) {
+  return `
+    <svg width="38" height="38" viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg"
+         style="display:block;border-radius:50%;background:${bg};">
+      <!-- head -->
+      <circle cx="19" cy="14" r="6" fill="${accentColor}" opacity="0.55"/>
+      <!-- body / shoulders -->
+      <path d="M6 34c0-7.18 5.82-13 13-13s13 5.82 13 13" fill="${accentColor}" opacity="0.3"/>
+      <!-- subtle inner shadow ring -->
+      <circle cx="19" cy="19" r="18" stroke="${accentColor}" stroke-width="0.8" opacity="0.18" fill="none"/>
+    </svg>`;
+}
+ 
 const TESTIMONIALS = [
   {
     quote: 'I had a spreadsheet, I had quotes, I thought I was prepared. What I didn\'t have was a way to see what was <strong style="color:#6B9FFF;">missing</strong>. The diagnostic flagged £2,800 in costs I hadn\'t mapped — all before I signed anything.',
     name: 'Sarah T.',
     location: 'Leeds',
     renovation: '£22k renovation',
-    avatar: '👩',
     avatarBg: 'rgba(74,125,255,0.12)',
     score: 28,
     tier: 'Contained',
     scoreColor: '#4A7DFF',
     accentColor: '#4A7DFF',
-    glowColor: '#4A7DFF',
     topLine: 'linear-gradient(to right, transparent, rgba(74,125,255,0.4), transparent)',
   },
   {
@@ -365,27 +379,35 @@ const TESTIMONIALS = [
     name: 'Emma R.',
     location: 'Manchester',
     renovation: '£31k renovation',
-    avatar: '👩‍💼',
     avatarBg: 'rgba(255,149,0,0.12)',
     score: 54,
     tier: 'Emerging',
     scoreColor: '#FF9500',
     accentColor: '#FF9500',
-    glowColor: '#FF9500',
     topLine: 'linear-gradient(to right, transparent, rgba(255,149,0,0.4), transparent)',
+  },
+  {
+    quote: 'Even with a smaller budget I assumed the risk was low. The diagnostic showed me <strong style="color:#6B9FFF;">two contractor clauses I hadn\'t read properly.</strong> Would have cost me more than the whole project.',
+    name: 'Tom B.',
+    location: 'Norwich',
+    renovation: '£11k renovation',
+    avatarBg: 'rgba(74,125,255,0.12)',
+    score: 41,
+    tier: 'Emerging',
+    scoreColor: '#4A7DFF',
+    accentColor: '#4A7DFF',
+    topLine: 'linear-gradient(to right, transparent, rgba(74,125,255,0.4), transparent)',
   },
   {
     quote: 'I was three weeks from signing when I did this. It completely changed every conversation I had with contractors after. <strong style="color:#FF7B6B;">Saved me from a decision I would have regretted.</strong>',
     name: 'Claire W.',
     location: 'Bristol',
     renovation: '£38k renovation',
-    avatar: '👩‍🦱',
     avatarBg: 'rgba(255,59,48,0.12)',
     score: 71,
     tier: 'Elevated',
     scoreColor: '#FF3B30',
     accentColor: '#FF6B35',
-    glowColor: '#FF3B30',
     topLine: 'linear-gradient(to right, transparent, rgba(255,107,53,0.4), transparent)',
   },
   {
@@ -393,27 +415,35 @@ const TESTIMONIALS = [
     name: 'James H.',
     location: 'Edinburgh',
     renovation: '£27k renovation',
-    avatar: '👨',
     avatarBg: 'rgba(74,125,255,0.12)',
     score: 33,
     tier: 'Contained',
     scoreColor: '#4A7DFF',
     accentColor: '#4A7DFF',
-    glowColor: '#4A7DFF',
     topLine: 'linear-gradient(to right, transparent, rgba(74,125,255,0.4), transparent)',
+  },
+  {
+    quote: 'My budget was under £15k so I thought a diagnostic wasn\'t really for me. Turns out <strong style="color:#FFB340;">smaller budgets have less margin for error,</strong> not more. That reframe alone was worth it.',
+    name: 'Diane K.',
+    location: 'Cardiff',
+    renovation: '£13k renovation',
+    avatarBg: 'rgba(255,149,0,0.12)',
+    score: 47,
+    tier: 'Emerging',
+    scoreColor: '#FF9500',
+    accentColor: '#FF9500',
+    topLine: 'linear-gradient(to right, transparent, rgba(255,149,0,0.4), transparent)',
   },
   {
     quote: 'The part about contingency funds was a wake-up call. I had 5% set aside. The diagnostic suggested I needed closer to <strong style="color:#FFB340;">18% given my scope.</strong> That difference would have hurt.',
     name: 'Rachel M.',
     location: 'Birmingham',
     renovation: '£44k renovation',
-    avatar: '👩‍🦰',
     avatarBg: 'rgba(255,149,0,0.12)',
     score: 61,
     tier: 'Emerging',
     scoreColor: '#FF9500',
     accentColor: '#FF9500',
-    glowColor: '#FF9500',
     topLine: 'linear-gradient(to right, transparent, rgba(255,149,0,0.4), transparent)',
   },
 ];
@@ -422,13 +452,14 @@ function buildCard(t) {
   const card = document.createElement('div');
   card.className = 'tcard';
   card.innerHTML = `
-    <div class="tcard-glow" style="background:${t.glowColor};"></div>
     <div class="quote-mark" style="color:${t.accentColor};opacity:0.4;">"</div>
     <p class="quote-text">${t.quote}</p>
     <div class="tcard-divider"></div>
     <div class="tcard-bottom">
       <div class="author">
-        <div class="author-avatar" style="background:${t.avatarBg};">${t.avatar}</div>
+        <div class="author-avatar" style="background:${t.avatarBg}; padding:0; overflow:hidden;">
+          ${avatarSVG(t.accentColor, t.avatarBg)}
+        </div>
         <div class="author-info">
           <span class="author-name">${t.name}</span>
           <span class="author-detail">${t.location} · ${t.renovation}</span>
