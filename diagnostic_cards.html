@@ -308,26 +308,28 @@ function param(key, fallback) {
   return isNaN(v) ? fallback : v;
 }
  
-// Demo mode — triggers when no params passed
-const DEMO = !p.has('f1') && !p.has('f2') && !p.has('f3');
+// Demo mode — triggers only when NO question params passed
+const DEMO = !p.has('q3') && !p.has('q6') && !p.has('q8') && !p.has('q9') && !p.has('q12');
  
-// Read binary tag values directly from F1–F8
-// Demo simulates: f1=1, f3=1, f4=1, f5=1 → 4 tags active
+// Read numeric question scores (1–4) from Hidden Fields
+const dQ3  = DEMO ? 1 : param('q3',  1);
+const dQ6  = DEMO ? 3 : param('q6',  1);
+const dQ7  = DEMO ? 2 : param('q7',  1);
+const dQ8  = DEMO ? 4 : param('q8',  1);
+const dQ9  = DEMO ? 4 : param('q9',  1);
+const dQ12 = DEMO ? 3 : param('q12', 1);
+ 
+// ── Calculate tags from numeric scores ──────────────────
 const tags = {
-  f1: DEMO ? 1 : param('f1', 0),  // HiddenCostRisk
-  f2: DEMO ? 0 : param('f2', 0),  // LabourCostRisk
-  f3: DEMO ? 1 : param('f3', 0),  // QuoteClarityRisk
-  f4: DEMO ? 1 : param('f4', 0),  // StressSensitivity
-  f5: DEMO ? 1 : param('f5', 0),  // TrackingRisk (always shown via active:true)
-  f6: DEMO ? 0 : param('f6', 0),  // BudgetSizeRisk
+  f1: dQ8  >= 3 ? 1 : 0,  // HiddenCostRisk
+  f2: dQ7  >= 3 ? 1 : 0,  // LabourCostRisk
+  f3: dQ6  >= 3 ? 1 : 0,  // QuoteClarityRisk
+  f4: dQ12 >= 3 ? 1 : 0,  // StressSensitivity
+  f5: 1,                   // TrackingRisk — always active
+  f6: dQ3  >= 3 ? 1 : 0,  // BudgetSizeRisk
 };
  
-// Read Q9 for TrackingRisk conditional copy
-// Also read directly as binary — pass q9 as numeric 1-4 separately
-const dQ9 = DEMO ? 1 : param('q9', 1);
- 
-// RiskAccumulation — use F8 directly if passed, otherwise sum tags
-const f8 = p.has('f8') ? param('f8', 0) : Object.values(tags).reduce((a,b) => a+b, 0);
+const f8 = Object.values(tags).reduce((a,b) => a+b, 0);
  
 // ── Card definitions ────────────────────────────────────
 const CARDS = [
@@ -547,3 +549,4 @@ if (activeCards.length === 0) {
 </script>
 </body>
 </html>
+ 
