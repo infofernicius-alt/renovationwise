@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@200;300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:             #07090F;
+    --surface:        rgba(255,255,255,0.03);
+    --surface-hover:  rgba(255,255,255,0.05);
+    --border:         rgba(255,255,255,0.07);
+    --border-hover:   rgba(255,255,255,0.13);
+    --text-primary:   #F2F2F7;
+    --text-secondary: rgba(242,242,247,0.55);
+    --text-tertiary:  rgba(242,242,247,0.28);
+    --gold:           #C9953A;
+    --gold-light:     #E8B86D;
+    --zone-low:       #4A7DFF;
+    --zone-mid:       #FF9500;
+    --zone-high:      #FF3B30;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html, body {
+    background: var(--bg);
+    font-family: 'Sora', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+
+  .wrapper {
+    max-width: 580px;
+    margin: 0 auto;
+    padding: 36px 20px 44px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* ── Section header ── */
+  .section-header {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.6s ease 0.1s forwards;
+  }
+
+  .section-eyebrow {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-eyebrow::before,
+  .section-eyebrow::after {
+    content: '';
+    display: block;
+    width: 24px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(22px, 5vw, 28px);
+    font-weight: 400;
+    color: var(--text-primary);
+    text-align: center;
+    line-height: 1.25;
+    letter-spacing: -0.3px;
+  }
+
+  .section-title em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .section-sub {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Cards stack ── */
+  .cards-stack {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  /* ── Single testimonial card ── */
+  .tcard {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 24px 24px 20px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: border-color 0.3s ease, background 0.3s ease;
+  }
+
+  .tcard.animate-in {
+    animation: cardReveal 0.6s cubic-bezier(0.34,1.15,0.64,1) forwards;
+  }
+
+  .tcard:hover {
+    border-color: var(--border-hover);
+    background: var(--surface-hover);
+  }
+
+  /* Top accent line — color per card */
+  .tcard::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 24px; right: 24px;
+    height: 1px;
+    /* gradient set inline */
+  }
+
+  /* Ambient glow */
+  .tcard-glow {
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    filter: blur(50px);
+    opacity: 0.07;
+    pointer-events: none;
+  }
+
+  /* ── Quote mark ── */
+  .quote-mark {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 56px;
+    font-weight: 300;
+    line-height: 1;
+    margin-bottom: -8px;
+    /* color set inline */
+  }
+
+  /* ── Quote text ── */
+  .quote-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(15px, 3.5vw, 18px);
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-primary);
+    line-height: 1.6;
+    letter-spacing: 0.01em;
+    margin-bottom: 20px;
+  }
+
+  .quote-text strong {
+    font-style: normal;
+    font-weight: 500;
+    /* color set inline */
+  }
+
+  /* ── Divider ── */
+  .tcard-divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 18px;
+  }
+
+  /* ── Bottom row ── */
+  .tcard-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  /* Author */
+  .author {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .author-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    /* bg set inline */
+  }
+
+  .author-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .author-name {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-primary);
+    letter-spacing: -0.1px;
+  }
+
+  .author-detail {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+    letter-spacing: 0.02em;
+  }
+
+  /* Score chip */
+  .score-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  .score-chip-label {
+    font-size: 9px;
+    font-weight: 400;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+  }
+
+  .score-chip-value {
+    display: flex;
+    align-items: baseline;
+    gap: 2px;
+  }
+
+  .score-chip-num {
+    font-family: 'Sora', sans-serif;
+    font-size: 22px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -1px;
+    /* color set inline */
+  }
+
+  .score-chip-denom {
+    font-size: 11px;
+    font-weight: 300;
+    color: var(--text-tertiary);
+  }
+
+  .score-chip-tier {
+    font-size: 9px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    /* color set inline */
+  }
+
+  /* ── Verified badge ── */
+  .verified-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    margin-top: 24px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.8s forwards;
+  }
+
+  .verified-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.6;
+  }
+
+  .verified-text {
+    font-size: 10px;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    color: var(--text-tertiary);
+    text-transform: uppercase;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(8px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  @keyframes cardReveal {
+    from { opacity:0; transform:translateY(16px) scale(0.985); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+  }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="section-header">
+    <div class="section-eyebrow">Real Homeowners</div>
+    <h2 class="section-title">What they discovered<br><em>before signing anything</em></h2>
+    <p class="section-sub">Verified responses from homeowners who completed the diagnostic</p>
+  </div>
+
+  <div class="cards-stack" id="cardsStack"></div>
+
+  <div class="verified-row">
+    <div class="verified-dot"></div>
+    <span class="verified-text">Verified diagnostic results · UK homeowners</span>
+    <div class="verified-dot"></div>
+  </div>
+
+</div>
+
+<script>
+const TESTIMONIALS = [
+  {
+    quote: 'I had a spreadsheet, I had quotes, I thought I was prepared. What I didn\'t have was a way to see what was <strong style="color:#6B9FFF;">missing</strong>. The diagnostic flagged £2,800 in costs I hadn\'t mapped — all before I signed anything.',
+    name: 'Sarah T.',
+    location: 'Leeds',
+    renovation: '£22k renovation',
+    avatar: '👩',
+    avatarBg: 'rgba(74,125,255,0.12)',
+    score: 28,
+    tier: 'Contained',
+    scoreColor: '#4A7DFF',
+    accentColor: '#4A7DFF',
+    glowColor: '#4A7DFF',
+    topLine: 'linear-gradient(to right, transparent, rgba(74,125,255,0.4), transparent)',
+  },
+  {
+    quote: 'The labour cost section was the one that stopped me. My contractor\'s quote had <strong style="color:#FFB340;">no fixed price clause anywhere</strong>. I didn\'t know that was unusual until I saw it flagged.',
+    name: 'Emma R.',
+    location: 'Manchester',
+    renovation: '£31k renovation',
+    avatar: '👩‍💼',
+    avatarBg: 'rgba(255,149,0,0.12)',
+    score: 54,
+    tier: 'Emerging',
+    scoreColor: '#FF9500',
+    accentColor: '#FF9500',
+    glowColor: '#FF9500',
+    topLine: 'linear-gradient(to right, transparent, rgba(255,149,0,0.4), transparent)',
+  },
+  {
+    quote: 'I was three weeks from signing when I did this. It completely changed every conversation I had with contractors after. <strong style="color:#FF7B6B;">Saved me from a decision I would have regretted.</strong>',
+    name: 'Claire W.',
+    location: 'Bristol',
+    renovation: '£38k renovation',
+    avatar: '👩‍🦱',
+    avatarBg: 'rgba(255,59,48,0.12)',
+    score: 71,
+    tier: 'Elevated',
+    scoreColor: '#FF3B30',
+    accentColor: '#FF6B35',
+    glowColor: '#FF3B30',
+    topLine: 'linear-gradient(to right, transparent, rgba(255,107,53,0.4), transparent)',
+  },
+];
+
+const stack = document.getElementById('cardsStack');
+
+TESTIMONIALS.forEach((t, i) => {
+  const card = document.createElement('div');
+  card.className = 'tcard';
+
+  card.innerHTML = `
+    <div class="tcard-glow" style="background:${t.glowColor};"></div>
+    <div class="quote-mark" style="color:${t.accentColor};opacity:0.4;">"</div>
+    <p class="quote-text">${t.quote}</p>
+    <div class="tcard-divider"></div>
+    <div class="tcard-bottom">
+      <div class="author">
+        <div class="author-avatar" style="background:${t.avatarBg};">${t.avatar}</div>
+        <div class="author-info">
+          <span class="author-name">${t.name}</span>
+          <span class="author-detail">${t.location} · ${t.renovation}</span>
+        </div>
+      </div>
+      <div class="score-chip">
+        <span class="score-chip-label">Exposure Score</span>
+        <div class="score-chip-value">
+          <span class="score-chip-num" style="color:${t.scoreColor};">${t.score}</span>
+          <span class="score-chip-denom">/100</span>
+        </div>
+        <span class="score-chip-tier" style="color:${t.scoreColor};">${t.tier}</span>
+      </div>
+    </div>
+  `;
+
+  // Top accent line
+  card.style.setProperty('--top-line', t.topLine);
+  const topLine = document.createElement('div');
+  topLine.style.cssText = `
+    position:absolute; top:0; left:24px; right:24px;
+    height:1px; background:${t.topLine};
+  `;
+  card.appendChild(topLine);
+
+  stack.appendChild(card);
+
+  setTimeout(() => card.classList.add('animate-in'), i * 150);
+});
+</script>
+</body>
+</html>
