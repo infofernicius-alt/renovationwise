@@ -16,42 +16,44 @@
     --text-tertiary:  rgba(242,242,247,0.28);
     --gold:           #C9953A;
     --gold-light:     #E8B86D;
-    --zone-low:       #4A7DFF;
-    --zone-mid:       #FF9500;
-    --zone-high:      #FF3B30;
+    --gap: 16px;
+    --duration: 38s;
+    --card-width: 340px;
   }
-
+ 
   * { margin:0; padding:0; box-sizing:border-box; }
-
+ 
   html, body {
     background: var(--bg);
     font-family: 'Sora', sans-serif;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
   }
-
+ 
   .wrapper {
-    max-width: 580px;
+    width: 100%;
     margin: 0 auto;
-    padding: 36px 20px 44px;
+    padding: 48px 0 52px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 0;
+    overflow: hidden;
   }
-
+ 
   /* ── Section header ── */
   .section-header {
     width: 100%;
+    max-width: 580px;
+    padding: 0 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 10px;
-    margin-bottom: 32px;
+    margin-bottom: 36px;
     opacity: 0;
     animation: fadeUp 0.6s ease 0.1s forwards;
   }
-
+ 
   .section-eyebrow {
     font-size: 10px;
     font-weight: 500;
@@ -62,7 +64,7 @@
     align-items: center;
     gap: 10px;
   }
-
+ 
   .section-eyebrow::before,
   .section-eyebrow::after {
     content: '';
@@ -72,7 +74,7 @@
     background: var(--gold);
     opacity: 0.5;
   }
-
+ 
   .section-title {
     font-family: 'Cormorant Garamond', serif;
     font-size: clamp(22px, 5vw, 28px);
@@ -82,12 +84,12 @@
     line-height: 1.25;
     letter-spacing: -0.3px;
   }
-
+ 
   .section-title em {
     font-style: italic;
     color: var(--gold-light);
   }
-
+ 
   .section-sub {
     font-size: 12px;
     font-weight: 300;
@@ -95,47 +97,71 @@
     text-align: center;
     letter-spacing: 0.02em;
   }
-
-  /* ── Cards stack ── */
-  .cards-stack {
+ 
+  /* ── Marquee container ── */
+  .marquee-outer {
+    position: relative;
     width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    overflow: hidden;
   }
-
+ 
+  /* Fade edges */
+  .marquee-outer::before,
+  .marquee-outer::after {
+    content: '';
+    position: absolute;
+    top: 0; bottom: 0;
+    width: 120px;
+    z-index: 2;
+    pointer-events: none;
+  }
+ 
+  .marquee-outer::before {
+    left: 0;
+    background: linear-gradient(to right, var(--bg), transparent);
+  }
+ 
+  .marquee-outer::after {
+    right: 0;
+    background: linear-gradient(to left, var(--bg), transparent);
+  }
+ 
+  .marquee-track {
+    display: flex;
+    gap: var(--gap);
+    width: max-content;
+    animation: marquee var(--duration) linear infinite;
+    padding: 8px 0 12px;
+  }
+ 
+  .marquee-track:hover {
+    animation-play-state: paused;
+  }
+ 
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(calc(-50% - var(--gap) / 2)); }
+  }
+ 
   /* ── Single testimonial card ── */
   .tcard {
+    width: var(--card-width);
+    flex-shrink: 0;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 24px 24px 20px;
     position: relative;
     overflow: hidden;
-    opacity: 0;
-    transform: translateY(16px);
     transition: border-color 0.3s ease, background 0.3s ease;
+    cursor: default;
   }
-
-  .tcard.animate-in {
-    animation: cardReveal 0.6s cubic-bezier(0.34,1.15,0.64,1) forwards;
-  }
-
+ 
   .tcard:hover {
     border-color: var(--border-hover);
     background: var(--surface-hover);
   }
-
-  /* Top accent line — color per card */
-  .tcard::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 24px; right: 24px;
-    height: 1px;
-    /* gradient set inline */
-  }
-
-  /* Ambient glow */
+ 
   .tcard-glow {
     position: absolute;
     top: -30px; right: -30px;
@@ -145,91 +171,83 @@
     opacity: 0.07;
     pointer-events: none;
   }
-
-  /* ── Quote mark ── */
+ 
   .quote-mark {
     font-family: 'Cormorant Garamond', serif;
     font-size: 56px;
     font-weight: 300;
     line-height: 1;
     margin-bottom: -8px;
-    /* color set inline */
   }
-
-  /* ── Quote text ── */
+ 
   .quote-text {
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(15px, 3.5vw, 18px);
+    font-size: 16px;
     font-weight: 400;
     font-style: italic;
     color: var(--text-primary);
     line-height: 1.6;
     letter-spacing: 0.01em;
     margin-bottom: 20px;
+    min-height: 100px;
   }
-
+ 
   .quote-text strong {
     font-style: normal;
     font-weight: 500;
-    /* color set inline */
   }
-
-  /* ── Divider ── */
+ 
   .tcard-divider {
     height: 1px;
     background: var(--border);
     margin-bottom: 18px;
   }
-
-  /* ── Bottom row ── */
+ 
   .tcard-bottom {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 12px;
   }
-
-  /* Author */
+ 
   .author {
     display: flex;
     align-items: center;
     gap: 12px;
   }
-
+ 
   .author-avatar {
-    width: 40px;
-    height: 40px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 16px;
+    font-size: 15px;
     flex-shrink: 0;
     border: 1px solid var(--border);
-    /* bg set inline */
   }
-
+ 
   .author-info {
     display: flex;
     flex-direction: column;
     gap: 2px;
   }
-
+ 
   .author-name {
     font-size: 13px;
     font-weight: 500;
     color: var(--text-primary);
     letter-spacing: -0.1px;
   }
-
+ 
   .author-detail {
     font-size: 11px;
     font-weight: 300;
     color: var(--text-tertiary);
     letter-spacing: 0.02em;
   }
-
-  /* Score chip */
+ 
   .score-chip {
     display: flex;
     flex-direction: column;
@@ -237,7 +255,7 @@
     gap: 2px;
     flex-shrink: 0;
   }
-
+ 
   .score-chip-label {
     font-size: 9px;
     font-weight: 400;
@@ -245,54 +263,52 @@
     text-transform: uppercase;
     color: var(--text-tertiary);
   }
-
+ 
   .score-chip-value {
     display: flex;
     align-items: baseline;
     gap: 2px;
   }
-
+ 
   .score-chip-num {
     font-family: 'Sora', sans-serif;
     font-size: 22px;
     font-weight: 600;
     line-height: 1;
     letter-spacing: -1px;
-    /* color set inline */
   }
-
+ 
   .score-chip-denom {
     font-size: 11px;
     font-weight: 300;
     color: var(--text-tertiary);
   }
-
+ 
   .score-chip-tier {
     font-size: 9px;
     font-weight: 500;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    /* color set inline */
   }
-
+ 
   /* ── Verified badge ── */
   .verified-row {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 6px;
-    margin-top: 24px;
+    margin-top: 28px;
     opacity: 0;
-    animation: fadeUp 0.5s ease 0.8s forwards;
+    animation: fadeUp 0.5s ease 0.6s forwards;
   }
-
+ 
   .verified-dot {
     width: 5px; height: 5px;
     border-radius: 50%;
     background: var(--gold);
     opacity: 0.6;
   }
-
+ 
   .verified-text {
     font-size: 10px;
     font-weight: 300;
@@ -300,38 +316,34 @@
     color: var(--text-tertiary);
     text-transform: uppercase;
   }
-
-  /* ── Animations ── */
+ 
   @keyframes fadeUp {
     from { opacity:0; transform:translateY(8px); }
     to   { opacity:1; transform:translateY(0); }
-  }
-
-  @keyframes cardReveal {
-    from { opacity:0; transform:translateY(16px) scale(0.985); }
-    to   { opacity:1; transform:translateY(0) scale(1); }
   }
 </style>
 </head>
 <body>
 <div class="wrapper">
-
+ 
   <div class="section-header">
     <div class="section-eyebrow">Real Homeowners</div>
     <h2 class="section-title">What they discovered<br><em>before signing anything</em></h2>
     <p class="section-sub">Verified responses from homeowners who completed the diagnostic</p>
   </div>
-
-  <div class="cards-stack" id="cardsStack"></div>
-
+ 
+  <div class="marquee-outer">
+    <div class="marquee-track" id="marqueeTrack"></div>
+  </div>
+ 
   <div class="verified-row">
     <div class="verified-dot"></div>
     <span class="verified-text">Verified diagnostic results · UK homeowners</span>
     <div class="verified-dot"></div>
   </div>
-
+ 
 </div>
-
+ 
 <script>
 const TESTIMONIALS = [
   {
@@ -376,14 +388,39 @@ const TESTIMONIALS = [
     glowColor: '#FF3B30',
     topLine: 'linear-gradient(to right, transparent, rgba(255,107,53,0.4), transparent)',
   },
+  {
+    quote: 'Thought I had everything under control. The score showed me three gaps I genuinely hadn\'t considered. <strong style="color:#6B9FFF;">Went back to my contractor with completely different questions.</strong>',
+    name: 'James H.',
+    location: 'Edinburgh',
+    renovation: '£27k renovation',
+    avatar: '👨',
+    avatarBg: 'rgba(74,125,255,0.12)',
+    score: 33,
+    tier: 'Contained',
+    scoreColor: '#4A7DFF',
+    accentColor: '#4A7DFF',
+    glowColor: '#4A7DFF',
+    topLine: 'linear-gradient(to right, transparent, rgba(74,125,255,0.4), transparent)',
+  },
+  {
+    quote: 'The part about contingency funds was a wake-up call. I had 5% set aside. The diagnostic suggested I needed closer to <strong style="color:#FFB340;">18% given my scope.</strong> That difference would have hurt.',
+    name: 'Rachel M.',
+    location: 'Birmingham',
+    renovation: '£44k renovation',
+    avatar: '👩‍🦰',
+    avatarBg: 'rgba(255,149,0,0.12)',
+    score: 61,
+    tier: 'Emerging',
+    scoreColor: '#FF9500',
+    accentColor: '#FF9500',
+    glowColor: '#FF9500',
+    topLine: 'linear-gradient(to right, transparent, rgba(255,149,0,0.4), transparent)',
+  },
 ];
-
-const stack = document.getElementById('cardsStack');
-
-TESTIMONIALS.forEach((t, i) => {
+ 
+function buildCard(t) {
   const card = document.createElement('div');
   card.className = 'tcard';
-
   card.innerHTML = `
     <div class="tcard-glow" style="background:${t.glowColor};"></div>
     <div class="quote-mark" style="color:${t.accentColor};opacity:0.4;">"</div>
@@ -398,7 +435,7 @@ TESTIMONIALS.forEach((t, i) => {
         </div>
       </div>
       <div class="score-chip">
-        <span class="score-chip-label">Exposure Score</span>
+        <span class="score-chip-label">Risk Score</span>
         <div class="score-chip-value">
           <span class="score-chip-num" style="color:${t.scoreColor};">${t.score}</span>
           <span class="score-chip-denom">/100</span>
@@ -407,19 +444,21 @@ TESTIMONIALS.forEach((t, i) => {
       </div>
     </div>
   `;
-
-  // Top accent line
-  card.style.setProperty('--top-line', t.topLine);
+ 
   const topLine = document.createElement('div');
   topLine.style.cssText = `
     position:absolute; top:0; left:24px; right:24px;
     height:1px; background:${t.topLine};
   `;
   card.appendChild(topLine);
-
-  stack.appendChild(card);
-
-  setTimeout(() => card.classList.add('animate-in'), i * 150);
+  return card;
+}
+ 
+const track = document.getElementById('marqueeTrack');
+ 
+// Duplicate cards for seamless infinite loop
+[...TESTIMONIALS, ...TESTIMONIALS].forEach(t => {
+  track.appendChild(buildCard(t));
 });
 </script>
 </body>
