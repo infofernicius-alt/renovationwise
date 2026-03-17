@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@200;300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:             #07090F;
+    --surface:        rgba(255,255,255,0.03);
+    --border:         rgba(255,255,255,0.07);
+    --text-primary:   #F2F2F7;
+    --text-secondary: rgba(242,242,247,0.55);
+    --accent:         #4A7DFF;
+    --accent-soft:    rgba(74,125,255,0.10);
+    --accent-border:  rgba(74,125,255,0.22);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html, body {
+    background: var(--bg);
+    font-family: 'Sora', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 20px;
+  }
+
+  .card {
+    width: min(520px, 100%);
+    background: var(--surface);
+    border: 1px solid var(--accent-border);
+    border-radius: 22px;
+    padding: 28px 24px 24px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: cardIn 0.7s cubic-bezier(0.34,1.15,0.64,1) 0.2s forwards;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 32px; right: 32px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--accent), transparent);
+    opacity: 0.5;
+  }
+
+  .card::after {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: var(--accent);
+    filter: blur(70px);
+    opacity: 0.05;
+    pointer-events: none;
+  }
+
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: var(--accent-soft);
+    border: 1px solid var(--accent-border);
+    border-radius: 100px;
+    padding: 6px 14px;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.5s forwards;
+  }
+
+  .status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  .status-text {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .card-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(22px, 5vw, 30px);
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.2;
+    letter-spacing: -0.3px;
+    margin-bottom: 16px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.6s forwards;
+  }
+
+  .card-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .card-divider {
+    height: 1px;
+    background: var(--border);
+    margin-bottom: 18px;
+    opacity: 0;
+    animation: fadeUp 0.4s ease 0.7s forwards;
+  }
+
+  .card-body {
+    margin-bottom: 18px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.75s forwards;
+  }
+
+  .card-body p {
+    font-size: 13.5px;
+    font-weight: 300;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    letter-spacing: 0.01em;
+  }
+
+  .card-body strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .insight-block {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.85s forwards;
+  }
+
+  .insight-line {
+    width: 2px;
+    align-self: stretch;
+    background: var(--accent);
+    border-radius: 2px;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  .insight-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text-secondary);
+    line-height: 1.55;
+  }
+
+  @keyframes cardIn {
+    from { opacity:0; transform:translateY(20px) scale(0.97); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(8px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity:1; transform:scale(1); }
+    50%      { opacity:0.5; transform:scale(0.75); }
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+  <div class="status-pill">
+    <div class="status-dot"></div>
+    <span class="status-text">Budget Clarity Detected</span>
+  </div>
+
+  <h2 class="card-title">At this investment level,<br><em>the stakes are proportionally higher.</em></h2>
+
+  <div class="card-divider"></div>
+
+  <div class="card-body">
+    <p>On a renovation above £25k, a 15% budget drift represents <strong>over £3,750 in unplanned spend</strong>. At £40k, that number reaches £6,000. These aren't edge cases — they reflect the average overrun reported by UK homeowners at this investment level.</p>
+  </div>
+
+  <div class="insight-block">
+    <div class="insight-line"></div>
+    <span class="insight-text">The diagnostic questions ahead are calibrated to identify exactly where that drift is most likely to enter your project — before it does.</span>
+  </div>
+
+</div>
+
+</body>
+</html>
