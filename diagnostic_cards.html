@@ -13,16 +13,12 @@
     --text-primary: #F2F2F7;
     --text-secondary: rgba(242,242,247,0.55);
     --text-tertiary:  rgba(242,242,247,0.28);
- 
-    /* Risk levels */
     --warning:  #FF9500;
     --critical: #FF3B30;
     --accent:   #4A7DFF;
     --multi:    #BF5AF2;
   }
- 
   * { margin:0; padding:0; box-sizing:border-box; }
- 
   html, body {
     background: var(--bg);
     font-family: 'Sora', sans-serif;
@@ -30,7 +26,6 @@
     padding: 0;
     min-height: 100vh;
   }
- 
   .wrapper {
     max-width: 560px;
     margin: 0 auto;
@@ -39,8 +34,6 @@
     flex-direction: column;
     gap: 0;
   }
- 
-  /* ── Section header ── */
   .section-header {
     display: flex;
     align-items: center;
@@ -50,13 +43,7 @@
     transform: translateY(10px);
     animation: fadeUp 0.5s ease 0.1s forwards;
   }
- 
-  .section-line {
-    flex: 1;
-    height: 1px;
-    background: var(--border);
-  }
- 
+  .section-line { flex: 1; height: 1px; background: var(--border); }
   .section-title {
     font-size: 10px;
     font-weight: 500;
@@ -65,15 +52,7 @@
     color: var(--text-tertiary);
     white-space: nowrap;
   }
- 
-  /* ── Cards grid ── */
-  .cards-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
- 
-  /* ── Single card ── */
+  .cards-grid { display: flex; flex-direction: column; gap: 10px; }
   .diag-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -88,27 +67,20 @@
     transform: translateY(14px);
     transition: border-color 0.25s ease, background 0.25s ease;
   }
- 
   .diag-card.animate-in {
     animation: cardReveal 0.55s cubic-bezier(0.34,1.2,0.64,1) forwards;
   }
- 
   .diag-card:hover {
     border-color: var(--border-hover);
     background: rgba(255,255,255,0.045);
   }
- 
-  /* Left accent bar */
   .diag-card::before {
     content: '';
     position: absolute;
     left: 0; top: 16px; bottom: 16px;
     width: 3px;
     border-radius: 0 3px 3px 0;
-    /* color set by JS */
   }
- 
-  /* Subtle glow top-right */
   .diag-card::after {
     content: '';
     position: absolute;
@@ -117,166 +89,63 @@
     border-radius: 50%;
     filter: blur(40px);
     opacity: 0.08;
-    /* background set by JS */
     pointer-events: none;
   }
- 
-  /* ── Card top row ── */
-  .card-top {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
- 
+  .card-top { display: flex; flex-direction: column; gap: 10px; }
   .card-top-row1 {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 10px;
   }
- 
-  .card-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-    min-width: 0;
-  }
- 
+  .card-left { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; }
   .card-icon {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     border-radius: 9px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 15px;
-    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; flex-shrink: 0;
   }
- 
-  .card-tag {
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-  }
- 
+  .card-tag { font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; }
   .card-title {
-    font-size: 13.5px;
-    font-weight: 600;
-    color: var(--text-primary);
-    line-height: 1.35;
-    letter-spacing: -0.1px;
-    margin-top: 2px;
+    font-size: 13.5px; font-weight: 600; color: var(--text-primary);
+    line-height: 1.35; letter-spacing: -0.1px; margin-top: 2px;
   }
- 
-  /* Risk badge */
   .risk-badge {
-    font-size: 9px;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    padding: 4px 9px;
-    border-radius: 100px;
-    border: 1px solid;
-    white-space: nowrap;
-    flex-shrink: 0;
+    font-size: 9px; font-weight: 500; letter-spacing: 0.08em;
+    text-transform: uppercase; padding: 4px 9px;
+    border-radius: 100px; border: 1px solid; white-space: nowrap; flex-shrink: 0;
   }
- 
-  /* ── Divider ── */
-  .card-divider {
-    height: 1px;
-    background: var(--border);
-    margin: 0 -2px;
-  }
- 
-  /* ── Body copy ── */
+  .card-divider { height: 1px; background: var(--border); margin: 0 -2px; }
   .card-body {
-    font-size: 12.5px;
-    font-weight: 300;
-    color: var(--text-secondary);
-    line-height: 1.65;
-    letter-spacing: 0.01em;
+    font-size: 12.5px; font-weight: 300; color: var(--text-secondary);
+    line-height: 1.65; letter-spacing: 0.01em;
   }
- 
-  .card-body strong {
-    color: var(--text-primary);
-    font-weight: 500;
-  }
- 
-  /* ── Insight line ── */
+  .card-body strong { color: var(--text-primary); font-weight: 500; }
   .card-insight {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
+    display: flex; align-items: flex-start; gap: 10px;
     background: rgba(255,255,255,0.025);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 10px 14px;
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px;
   }
- 
-  .insight-dot {
-    width: 5px;
-    height: 5px;
-    border-radius: 50%;
-    flex-shrink: 0;
-    margin-top: 5px;
-    /* bg set by JS */
-  }
- 
+  .insight-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
   .insight-text {
     font-family: 'Cormorant Garamond', serif;
-    font-size: 13px;
-    font-weight: 300;
-    font-style: italic;
-    color: var(--text-secondary);
-    line-height: 1.5;
+    font-size: 13px; font-weight: 300; font-style: italic;
+    color: var(--text-secondary); line-height: 1.5;
   }
- 
-  /* ── Risk Accumulation card (special) ── */
-  .diag-card.risk-multi {
-    border-color: rgba(191,90,242,0.2);
-    background: rgba(191,90,242,0.04);
-  }
- 
-  .diag-card.risk-critical {
-    border-color: rgba(255,59,48,0.22);
-    background: rgba(255,59,48,0.04);
-  }
- 
-  /* ── Empty state ── */
+  .diag-card.risk-multi { border-color: rgba(191,90,242,0.2); background: rgba(191,90,242,0.04); }
+  .diag-card.risk-critical { border-color: rgba(255,59,48,0.22); background: rgba(255,59,48,0.04); }
   .empty-state {
-    display: none;
-    text-align: center;
-    padding: 32px 20px;
-    opacity: 0;
-    animation: fadeUp 0.5s ease 0.3s forwards;
+    display: none; text-align: center; padding: 32px 20px;
+    opacity: 0; animation: fadeUp 0.5s ease 0.3s forwards;
   }
- 
   .empty-state.visible { display: block; }
- 
   .empty-icon { font-size: 28px; margin-bottom: 12px; }
- 
-  .empty-title {
-    font-size: 14px;
-    font-weight: 500;
-    color: var(--text-primary);
-    margin-bottom: 6px;
-  }
- 
-  .empty-body {
-    font-size: 12px;
-    font-weight: 300;
-    color: var(--text-tertiary);
-    line-height: 1.6;
-  }
- 
-  /* ── Animations ── */
+  .empty-title { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px; }
+  .empty-body { font-size: 12px; font-weight: 300; color: var(--text-tertiary); line-height: 1.6; }
   @keyframes fadeUp {
     from { opacity:0; transform:translateY(10px); }
     to   { opacity:1; transform:translateY(0); }
   }
- 
   @keyframes cardReveal {
     from { opacity:0; transform:translateY(14px) scale(0.98); }
     to   { opacity:1; transform:translateY(0) scale(1); }
@@ -290,7 +159,6 @@
     <span class="section-title">Your Exposure Signals</span>
     <div class="section-line"></div>
   </div>
- 
   <div class="cards-grid" id="cardsGrid"></div>
   <div class="empty-state" id="emptyState">
     <div class="empty-icon">✅</div>
@@ -298,40 +166,35 @@
     <div class="empty-body">Your responses indicate a well-structured approach.<br>Continue with the recommended financial controls below.</div>
   </div>
 </div>
- 
+
 <script>
-// ── Read URL params ─────────────────────────────────────
 const p = new URLSearchParams(window.location.search);
- 
+
 function param(key, fallback) {
   const v = parseInt(p.get(key), 10);
   return isNaN(v) ? fallback : v;
 }
- 
-// Demo mode — triggers only when NO question params passed
+
 const DEMO = !p.has('q3') && !p.has('q6') && !p.has('q8') && !p.has('q9') && !p.has('q12');
- 
-// Read numeric question scores (1–4) from Hidden Fields
+
 const dQ3  = DEMO ? 1 : param('q3',  1);
 const dQ6  = DEMO ? 3 : param('q6',  1);
 const dQ7  = DEMO ? 2 : param('q7',  1);
 const dQ8  = DEMO ? 4 : param('q8',  1);
 const dQ9  = DEMO ? 4 : param('q9',  1);
 const dQ12 = DEMO ? 3 : param('q12', 1);
- 
-// ── Calculate tags from numeric scores ──────────────────
+
 const tags = {
-  f1: dQ8  >= 3 ? 1 : 0,  // HiddenCostRisk
-  f2: dQ7  >= 3 ? 1 : 0,  // LabourCostRisk
-  f3: dQ6  >= 3 ? 1 : 0,  // QuoteClarityRisk
-  f4: dQ12 >= 3 ? 1 : 0,  // StressSensitivity
-  f5: 1,                   // TrackingRisk — always active
-  f6: dQ3  >= 3 ? 1 : 0,  // BudgetSizeRisk
+  f1: dQ8  >= 3 ? 1 : 0,
+  f2: dQ7  >= 3 ? 1 : 0,
+  f3: dQ6  >= 3 ? 1 : 0,
+  f4: dQ12 >= 3 ? 1 : 0,
+  f5: 1,
+  f6: dQ3  >= 3 ? 1 : 0,
 };
- 
+
 const f8 = Object.values(tags).reduce((a,b) => a+b, 0);
- 
-// ── Card definitions ────────────────────────────────────
+
 const CARDS = [
   {
     id: 'f3',
@@ -342,7 +205,7 @@ const CARDS = [
     riskLevel: 'Medium Risk',
     riskColor: '#FF9500',
     accentColor: '#FF9500',
-    body: 'Your answers suggest you\'re reviewing quotes that may not include the same scope. <strong>What looks like a cheaper option often excludes critical line items</strong> — electrics, waste removal, or fitting — that surface as add-ons once work begins.',
+    body: 'Your answers suggest you\'re reviewing quotes that may not include the same scope. <strong>What looks like a cheaper option often excludes critical line items</strong>: electrics, waste removal and fitting. These surface as add-ons once work begins.',
     insight: 'Most kitchen quotes exclude at least 3 cost categories. A like-for-like comparison requires a fixed scope document before any price is valid.'
   },
   {
@@ -366,7 +229,7 @@ const CARDS = [
     riskLevel: 'High Risk',
     riskColor: '#FF6B35',
     accentColor: '#FF6B35',
-    body: 'Your answers indicate gaps in your current cost map. <strong>Electrics, plastering, flooring, VAT and waste removal</strong> are consistently the categories homeowners discover late — after quotes are signed and budgets are set.',
+    body: 'Your answers indicate gaps in your current cost map. <strong>Electrics, plastering, flooring, VAT and waste removal</strong> are consistently the categories homeowners discover late, after quotes are signed and budgets are set.',
     insight: 'Hidden costs typically add 18–25% on top of kitchen unit costs. This is one of the primary entry points for Financial Drift in UK kitchen renovations.'
   },
   {
@@ -374,31 +237,35 @@ const CARDS = [
     active: () => true,
     icon: '📊',
     tag: 'Financial Tracking',
-    title: () => dQ9 <= 2
-      ? 'Your tracking foundation needs renovation-grade precision'
-      : 'Your budget has no early-warning mechanism',
-    riskLevel: () => {
+    title: function() { return dQ9 <= 2 ? 'Your tracking foundation needs renovation-grade precision' : 'Your budget has no early-warning mechanism'; },
+    riskLevel: function() {
       if (dQ9 === 1) return 'Preventive Action';
       if (dQ9 === 2) return 'Low Risk';
       if (dQ9 === 3) return 'High Risk';
       return 'Critical';
     },
-    riskColor: () => {
+    riskColor: function() {
       if (dQ9 <= 2) return '#4A7DFF';
       if (dQ9 === 3) return '#FF6B35';
       return '#FF3B30';
     },
-    accentColor: () => {
+    accentColor: function() {
       if (dQ9 <= 2) return '#4A7DFF';
       if (dQ9 === 3) return '#FF6B35';
       return '#FF3B30';
     },
-    body: () => dQ9 <= 2
-      ? 'You have a tracking foundation in place — but kitchen renovation costs require <strong>category-level precision that most basic systems don\'t provide</strong>. Small deviations in labour, materials and hidden costs need to be caught early, before they compound into Financial Drift.'
-      : 'Without a structured, category-level tracker, <strong>small cost deviations accumulate silently</strong>. By the time the total becomes visible — in your bank account or on an invoice — the drift has already compounded beyond easy correction.',
-    insight: () => dQ9 <= 2
-      ? 'A structured system doesn\'t just track what you spend — it flags when a category is drifting before the invoice arrives.'
-      : '62% of homeowners who exceeded their budget had no structured tracking system in place. Without category-level visibility, Financial Drift compounds before the total becomes visible anywhere.'
+    body: function() {
+      if (dQ9 <= 2) {
+        return 'You have a tracking foundation in place. Kitchen renovation costs require <strong>category-level precision that most basic systems don\'t provide</strong>. Small deviations in labour, materials and hidden costs need to be caught early, before they compound into Financial Drift.';
+      }
+      return 'Without a structured, category-level tracker, <strong>small cost deviations accumulate silently</strong>. By the time the total becomes visible, whether in your bank account or on an invoice, the drift has already compounded beyond easy correction.';
+    },
+    insight: function() {
+      if (dQ9 <= 2) {
+        return 'A structured system does more than track what you spend. It flags when a category is drifting before the invoice arrives.';
+      }
+      return '62% of homeowners who exceeded their budget had no structured tracking system in place. Without category-level visibility, Financial Drift compounds before the total becomes visible anywhere.';
+    }
   },
   {
     id: 'f4',
@@ -410,7 +277,7 @@ const CARDS = [
     riskColor: '#FF6B35',
     accentColor: '#FF6B35',
     body: 'Your answers indicate that an unexpected cost increase would have <strong>real consequences beyond the renovation itself</strong>. When financial margins are thin, the structural integrity of your budget plan becomes critical, not optional.',
-    insight: 'Homeowners who report high financial stress sensitivity are 3x more likely to make reactive decisions under contractor pressure — often the most costly ones.'
+    insight: 'Homeowners who report high financial stress sensitivity are 3x more likely to make reactive decisions under contractor pressure. These tend to be the most costly ones.'
   },
   {
     id: 'f6',
@@ -421,17 +288,15 @@ const CARDS = [
     riskLevel: 'Elevated Risk',
     riskColor: '#FF3B30',
     accentColor: '#FF3B30',
-    body: 'At the investment level you\'re planning, <strong>each percentage point of overrun represents a significant absolute amount</strong>. A 15% drift on a £35k renovation is £5,250 — not a rounding error. Budgets at this level require proportionally more rigorous financial structure.',
-    insight: 'UK renovations above £25k are 40% more likely to exceed budget than smaller projects. Not because they're harder, but because the number of decisions and suppliers involved multiplies every Financial Drift entry point.'
+    body: 'At the investment level you\'re planning, <strong>each percentage point of overrun represents a significant absolute amount</strong>. A 15% drift on a \u00a335k renovation is \u00a35,250. That is not a rounding error. Budgets at this level require proportionally more rigorous financial structure.',
+    insight: 'UK renovations above \u00a325k are 40% more likely to exceed budget than smaller projects. Not because they\'re harder, but because the number of decisions and suppliers involved multiplies every Financial Drift entry point.'
   },
 ];
- 
-// ── Render ──────────────────────────────────────────────
+
 const grid = document.getElementById('cardsGrid');
 const emptyState = document.getElementById('emptyState');
- 
 const activeCards = CARDS.filter(c => c.active());
- 
+
 if (activeCards.length === 0) {
   emptyState.classList.add('visible');
 } else {
@@ -442,7 +307,7 @@ if (activeCards.length === 0) {
     const accentColor = typeof card.accentColor === 'function' ? card.accentColor() : card.accentColor;
     const body        = typeof card.body        === 'function' ? card.body()        : card.body;
     const insight     = typeof card.insight     === 'function' ? card.insight()     : card.insight;
- 
+
     const el = document.createElement('div');
     el.className = 'diag-card';
     el.innerHTML = `
@@ -463,58 +328,40 @@ if (activeCards.length === 0) {
         <span class="insight-text">${insight}</span>
       </div>
     `;
- 
-    // Accent bar & glow
+
     el.style.setProperty('--card-accent', accentColor);
     el.style.cssText += `--accent-color:${accentColor};`;
- 
-    // Apply pseudo styles via real elements
+
     const bar = document.createElement('div');
-    bar.style.cssText = `
-      position:absolute; left:0; top:16px; bottom:16px;
-      width:3px; border-radius:0 3px 3px 0;
-      background:${accentColor};
-      opacity:0.7;
-    `;
+    bar.style.cssText = `position:absolute;left:0;top:16px;bottom:16px;width:3px;border-radius:0 3px 3px 0;background:${accentColor};opacity:0.7;`;
     el.appendChild(bar);
- 
+
     const glow = document.createElement('div');
-    glow.style.cssText = `
-      position:absolute; top:-40px; right:-40px;
-      width:120px; height:120px; border-radius:50%;
-      filter:blur(40px); opacity:0.1;
-      background:${accentColor};
-      pointer-events:none;
-    `;
+    glow.style.cssText = `position:absolute;top:-40px;right:-40px;width:120px;height:120px;border-radius:50%;filter:blur(40px);opacity:0.1;background:${accentColor};pointer-events:none;`;
     el.appendChild(glow);
- 
+
     grid.appendChild(el);
- 
-    // Staggered animation
-    setTimeout(() => {
-      el.classList.add('animate-in');
-    }, index * 120);
+    setTimeout(() => el.classList.add('animate-in'), index * 120);
   });
- 
-  // ── RiskAccumulation cards ──
+
   if (f8 >= 3) {
     const isHighRisk = f8 >= 5;
     const multiCard = document.createElement('div');
     multiCard.className = `diag-card ${isHighRisk ? 'risk-critical' : 'risk-multi'}`;
- 
+
     const color = isHighRisk ? '#FF3B30' : '#BF5AF2';
     const icon  = isHighRisk ? '🔴' : '🚨';
     const tag   = isHighRisk ? 'Critical Exposure Combination' : 'Multiple Signals Detected';
     const title = isHighRisk
       ? 'Your renovation carries critical financial exposure'
       : 'Multiple risk signals are compounding each other';
-    const body  = isHighRisk
-      ? 'Your diagnostic has triggered <strong>5 or more risk signals simultaneously</strong>. At this level, an unstructured renovation budget is extremely unlikely to finish within its original plan. Immediate financial structure is not a precaution — it is a necessity.'
-      : 'Your diagnostic has identified <strong>3 or more areas of concurrent financial risk</strong>. Each signal compounds the others — what would be a manageable issue in isolation becomes significantly harder to control when multiple exposure points are active at the same time.';
+    const body = isHighRisk
+      ? 'Your diagnostic has triggered <strong>5 or more risk signals simultaneously</strong>. At this level, an unstructured renovation budget is extremely unlikely to finish within its original plan. Immediate financial structure is not a precaution. It is a necessity.'
+      : 'Your diagnostic has identified <strong>3 or more areas of concurrent financial risk</strong>. Each signal compounds the others. What would be manageable in isolation becomes significantly harder to control when multiple exposure points are active at the same time.';
     const insight = isHighRisk
       ? 'Renovations with 5+ concurrent risk signals exceed their original budget in 89% of cases without a structured financial control system in place.'
       : 'When 3 or more risk signals are active simultaneously, the probability of budget overrun increases by over 200% compared to a single isolated signal.';
- 
+
     multiCard.innerHTML = `
       <div class="card-top">
         <div class="card-top-row1">
@@ -533,15 +380,11 @@ if (activeCards.length === 0) {
         <span class="insight-text">${insight}</span>
       </div>
     `;
- 
+
     const bar = document.createElement('div');
-    bar.style.cssText = `
-      position:absolute; left:0; top:16px; bottom:16px;
-      width:3px; border-radius:0 3px 3px 0;
-      background:${color}; opacity:0.7;
-    `;
+    bar.style.cssText = `position:absolute;left:0;top:16px;bottom:16px;width:3px;border-radius:0 3px 3px 0;background:${color};opacity:0.7;`;
     multiCard.appendChild(bar);
- 
+
     grid.appendChild(multiCard);
     setTimeout(() => multiCard.classList.add('animate-in'), activeCards.length * 120 + 80);
   }
